@@ -1,8 +1,12 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { json } = require('express');
+require('dotenv').config();
 
 const createUser = asyncHandler(async (req,res)=>{
-    const {username, email, password} = req.body;
+    const {username, email, password, userimg} = req.body;
 
     if(!username && !email && !password){
         res.status(400);
@@ -14,10 +18,13 @@ const createUser = asyncHandler(async (req,res)=>{
         throw new Error("User already registered");
       }
     
+    const hasedPassword = await bcrypt.hash(password, 11)
+
     const user = await User.create({
         username,
         email,
-        password
+        password:hasedPassword,
+        userimg
     })
 
     if (user) {
@@ -31,7 +38,43 @@ const createUser = asyncHandler(async (req,res)=>{
     })
 
 const loginUser = asyncHandler(async (req,res)=>{
-    res.json({message:"loginUser success"})
+    const {email, password} = req.body;
+
+    if (!email || !password) {
+        res.status(400);
+        throw new Error("All Filed are Mandatory");
+      }
+
+    const userExist = await User.findOne({email});
+
+    if (userExist && await bcrypt.compare(password, userExist.password)){
+        jwt.sign({
+          username:userExist.username,
+          email:userExist.email,
+          id:userExist._id
+        },
+        process.env.SECRET_KEY,
+        {},(err,token)=>{
+          if (err) throw err;
+          res.cookie('token',token).status(200).json(userExist);
+        })
+    }else{
+        res.status(401);
+        throw new Error("Email or Password not valid");
+    }
+})
+
+const userProfile = asyncHandler(async (req,res)=>{
+  const {token} = req.cookies;
+  if (token){
+    jwt.verify(token, process.env.SECRET_KEY,{},async (err,userData)=>{
+      if (err) throw err;
+      const profileData = await User.findById(userData.id);
+      res.json(profileData);
+    })
+  }else{
+    res.json(null);
+  }
 })
 
 const currentUser = asyncHandler(async (req,res)=>{
@@ -39,4 +82,4 @@ const currentUser = asyncHandler(async (req,res)=>{
     res.json(user)
 })
 
-module.exports = {createUser, loginUser, currentUser}
+module.exports = {createUser, loginUser, currentUser, userProfile}

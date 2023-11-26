@@ -6,8 +6,7 @@ const Tweet = require('../models/tweetModel');
 const getAllTweets = asyncHandler(async (req,res)=>{
     const allTweets = await Tweet.find();
     console.log(allTweets)
-    console.log(allTweets.tweetpost)
-    res.status(200).json({tweet:allTweets.tweetpost})
+    res.status(200).json(allTweets)
     })
 
 
@@ -20,10 +19,11 @@ const getSelfTweets = asyncHandler(async (req,res)=>{
 
 
 const createTweet = asyncHandler(async (req,res)=>{
-    const {ownerid,tweetpost} = req.body;
+    const {ownerid,tweetpost,tweetimg} = req.body;
     const newTweet = await Tweet.create({
         ownerid,
-        tweetpost
+        tweetpost,
+        tweetimg
     })
     if (newTweet) {
         res.status(201);

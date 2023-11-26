@@ -13,6 +13,10 @@ const userSchema = mongoose.Schema(
         password:{
             type:String,
             required:[true, 'Please enter the password']
+        },
+        userimg:{
+            type:String,
+            default:"https://upload.wikimedia.org/wikipedia/commons/3/38/Stranger_Things_logo.png"
         }
     }
 )

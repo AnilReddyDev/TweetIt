@@ -15,6 +15,9 @@ const tweetSchema = mongoose.Schema(
       type: String,
       required: [true, "Please enter the contact name"],
     },
+    tweetimg:{
+      type: String,
+    }
   },
   {
     timestamps: true,
