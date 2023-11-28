@@ -7,7 +7,12 @@ require('dotenv').config();
 
 const createUser = asyncHandler(async (req,res)=>{
     const {username, email, password, userimg} = req.body;
-
+    var userImgUpdate = "";
+    if (!userimg){
+      var userImgUpdate = "https://upload.wikimedia.org/wikipedia/commons/3/38/Stranger_Things_logo.png";
+    }else{
+      var userImgUpdate = userimg;
+    }
     if(!username && !email && !password){
         res.status(400);
         throw new Error("All fields are mandatory !")
@@ -24,7 +29,8 @@ const createUser = asyncHandler(async (req,res)=>{
         username,
         email,
         password:hasedPassword,
-        userimg
+        userimg:userImgUpdate,
+      
     })
 
     if (user) {
