@@ -1,16 +1,15 @@
+import React,{useState,useEffect} from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import React, { useState, useEffect } from 'react'
 import Tweetcard from '../component/Tweetcard';
-import { useNavigate } from 'react-router-dom';
-
-export default function Profile() {
+export default function ProfileParams() {
     const navigate = useNavigate();
     const [userProfile, setUserProfile] = useState();
     const [selfTweetList, setSelfTweetList] = useState([]);
-    
+    const {id} = useParams()
     const getUserProfile = async () => {
         try {
-            const profile = await axios.get("/api/user/profile");
+            const profile = await axios.get(`/api/user/currentuser/${id}`);
             // console.log(profile.data)
             setUserProfile(profile.data)
         } catch (err) {
@@ -38,8 +37,8 @@ export default function Profile() {
           const isTokenAvailable = cookieExists('token');
           
           if (!isTokenAvailable) {
-              navigate('/')
-          }
+            navigate('/')
+          } 
     }, []);
 
     useEffect(() => {
@@ -69,11 +68,11 @@ export default function Profile() {
                     )}
                     {selfTweetList && (<div>
                         {selfTweetList.map((item) => {
-                            return <Tweetcard key={item._id} contentpro={item} />;
+                            return <Tweetcard key={item.id} contentpro={item} />;
                         })}
                     </div>)}
                 </div>
-
+                        
                 <div className='rightCon hidden sm:block sm:w-w30 sm:border-bw1 sm:border-hash'></div>
             </div>
         </>

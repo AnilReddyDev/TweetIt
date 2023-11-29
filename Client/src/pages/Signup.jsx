@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,20 @@ export default function Signup() {
       console.log("Registration failed. Try again !")
     }
   }
+  useEffect(() => {
+    const cookieExists = (name) => {
+      return document.cookie.split(';').some((cookie) => {
+        return cookie.trim().startsWith(`${name}=`);
+      });
+    };
+
+    const isTokenAvailable = cookieExists('token');
+    
+    if (isTokenAvailable) {
+      navigate('/home')
+    } 
+  }, [])
+  
   return (
     <div className='flex flex-col h-screen items-center bg-black justify-center'>
       <div className=' bg-gray-400 py-5 rounded-md '>
@@ -52,7 +66,7 @@ export default function Signup() {
           <button className=' w-44 h-14 bg-red-600 text-white text-2xl font-medium text-center rounded-md'>Register</button>
           <div className='text-center py-2 text-black'>
             Already a member ? &#32;
-            <Link to={"/login"} className='text-red-600 underline'>
+            <Link to={"/"} className='text-red-600 underline'>
               Login Now
             </Link>
           </div>

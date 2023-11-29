@@ -13,7 +13,6 @@ const tweetSchema = mongoose.Schema(
     },
     tweetpost: {
       type: String,
-      required: [true, "Please enter the contact name"],
     },
     tweetimg:{
       type: String,
